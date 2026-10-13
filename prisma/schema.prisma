@@ -1,0 +1,217 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  name         String
+  password     String
+  role         Role          @default(CUSTOMER)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  city         String?
+  phoneNumber  String?
+  image        String?
+  bhattaDetail BhattaDetail?
+  deliveries   Delivery[]    @relation("DriverDeliveries")
+  driverDetail DriverDetail?
+  orders       Order[]       @relation("CustomerOrders")
+  managedOrders Order[]      @relation("AdminOrders")
+  products     Product[]     @relation("AdminProducts")
+}
+
+model DriverDetail {
+  id               String    @id @default(uuid())
+  driverId         String    @unique
+  cnicNumber       String?
+  cnicFrontUrl     String?
+  cnicBackUrl      String?
+  dateOfBirth      DateTime?
+  profilePhotoUrl  String?
+  licenseNumber    String?
+  licenseExpiry    DateTime?
+  licenseImageUrl  String?
+  vehicleType      String?
+  vehicleModel     String?
+  registrationNo   String?
+  registrationBook String?
+  loadCapacity     Int?
+  vehicleImageUrl  String?
+  bankTitle        String?
+  bankName         String?
+  accountNumber    String?
+  easypaisaNumber  String?
+  isVerified       Boolean   @default(false)
+  isOnline         Boolean   @default(false)
+  availableDays    String?
+  workingHours     String?
+  urgentAvailable  Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  driver           User      @relation(fields: [driverId], references: [id])
+}
+
+model BhattaDetail {
+  id                  String        @id @default(uuid())
+  sellerId            String        @unique
+  bhattaName          String
+  address             String
+  phoneNumber         String
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  accountNumber       String?
+  accountTitle        String?
+  avgDailyProduction  Int?
+  bankName            String?
+  bhattaImageUrl      String?
+  brickTypes          String?
+  businessDescription String?
+  businessLicenseUrl  String?
+  businessType        BusinessType?
+  city                String?
+  cnicBackUrl         String?
+  cnicFrontUrl        String?
+  cnicNumber          String?
+  deliveryAvailable   Boolean       @default(true)
+  deliveryCharges     Float?
+  deliveryRadius      Int?
+  easypaisaNumber     String?
+  isVerified          Boolean       @default(false)
+  latitude            Float?
+  longitude           Float?
+  minOrderQty         Int?
+  pickupAvailable     Boolean       @default(false)
+  province            String?
+  yearsExperience     Int?
+  seller              User          @relation(fields: [sellerId], references: [id])
+}
+
+model Product {
+  id          String         @id @default(uuid())
+  sellerId    String
+  name        String
+  description String
+  price       Float
+  stock       Int
+  imageUrl    String?
+  brickType   String?
+  strength    String?
+  dimensions  String?
+  weight      String?
+  color       String?
+  category    String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  orderItems  OrderItem[]
+  admin       User           @relation("AdminProducts", fields: [sellerId], references: [id])
+  images      ProductImage[]
+}
+
+model ProductImage {
+  id        String   @id @default(uuid())
+  productId String
+  url       String
+  createdAt DateTime @default(now())
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Order {
+  id            String        @id @default(uuid())
+  customerId    String
+  sellerId      String
+  status        OrderStatus   @default(PENDING)
+  totalAmount   Float
+  paymentMethod PaymentMethod @default(COD)
+  isPaid        Boolean       @default(false)
+  address       String
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  latitude      Float?
+  longitude     Float?
+  delivery      Delivery?
+  customer      User          @relation("CustomerOrders", fields: [customerId], references: [id], onDelete: Cascade)
+  admin         User          @relation("AdminOrders", fields: [sellerId], references: [id], onDelete: Cascade)
+  items         OrderItem[]
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Float
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model Delivery {
+  id        String      @id @default(uuid())
+  orderId   String      @unique
+  driverId  String?
+  latitude  Float?
+  longitude Float?
+  status    OrderStatus @default(PENDING)
+  updatedAt DateTime    @updatedAt
+  driver    User?       @relation("DriverDeliveries", fields: [driverId], references: [id])
+  order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+model ContactReport {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  type      String
+  subject   String
+  message   String
+  status    String   @default("OPEN")
+  adminNote String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PlatformSettings {
+  id                    Int      @id @default(1)
+  platformName          String   @default("Apna Bhatta")
+  contactEmail          String   @default("admin@apnabhatta.com")
+  contactPhone          String   @default("+92 300 0000000")
+  commissionRate        Float    @default(5.0)
+  minOrderQty           Int      @default(500)
+  deliveryBaseCharge    Float    @default(500.0)
+  deliveryPerKmRate     Float    @default(50.0)
+  maintenanceMode       Boolean  @default(false)
+  allowNewRegistrations Boolean  @default(true)
+  requireDriverApproval Boolean  @default(true)
+  updatedAt             DateTime @updatedAt
+}
+
+enum Role {
+  CUSTOMER
+  DRIVER
+  ADMIN
+}
+
+enum BusinessType {
+  KILN_OWNER
+  DISTRIBUTOR
+  MANUFACTURER
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  DISPATCHED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  COD
+  ONLINE
+}

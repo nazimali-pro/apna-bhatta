@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+:root {
+    --font-inter: 'Inter', system-ui, sans-serif;
+}
+
+* {
+    font-family: var(--font-inter);
+}
+
+
+@theme {
+  /* Remove white/black overrides to prevent render bugs */
+  /* --color-white and --color-black left as browser defaults */
+
+  /* Muted Terracotta — replaces vivid blue for all CTAs */
+  --color-blue-50: #fdf4ef;
+  --color-blue-100: #f8e2d5;
+  --color-blue-200: #f0c4a8;
+  --color-blue-300: #e2a07c;
+  --color-blue-400: #c87c55;
+  --color-blue-500: #b06040;
+  /* Icon backgrounds */
+  --color-blue-600: #8b4a30;
+  /* Primary buttons */
+  --color-blue-700: #6e3822;
+  /* Hover state */
+  --color-blue-800: #562c19;
+  --color-blue-900: #422112;
+  --color-blue-950: #2a1409;
+
+  /* Warm Stone / Parchment — replaces gray globally */
+  --color-gray-50: var(--gray-50);
+  /* Lightest bg  */
+  --color-gray-100: var(--gray-100);
+  /* Card bg      */
+  --color-gray-200: var(--gray-200);
+  /* Borders      */
+  --color-gray-300: var(--gray-300);
+  /* Inputs       */
+  --color-gray-400: var(--gray-400);
+  /* Placeholder  */
+  --color-gray-500: var(--gray-500);
+  /* Muted text   */
+  --color-gray-600: var(--gray-600);
+  /* Body text    */
+  --color-gray-700: var(--gray-700);
+  /* Subheadings  */
+  --color-gray-800: var(--gray-800);
+  /* Headings     */
+  --color-gray-900: var(--gray-900);
+  /* Strong heads */
+  --color-gray-950: var(--gray-950);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  --font-mono: var(--font-geist-mono);
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --gray-50: #f8f4ef;
+  --gray-100: #f0ebe3;
+  --gray-200: #e1d8cc;
+  --gray-300: #c8bdb0;
+  --gray-400: #a8998a;
+  --gray-500: #8a7a6c;
+  --gray-600: #6e6055;
+  --gray-700: #564b42;
+  --gray-800: #3e342c;
+  --gray-900: #2a2019;
+  --gray-950: #1a120d;
+
+  /* Global Semantic Theme Tokens — Permanent Light Mode */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f4ef;
+  --text-primary: #171717;
+  --text-secondary: #564b42;
+  --border-primary: #e1d8cc;
+  --accent-primary: #b06040;
+  --brand-dark: #2a1409;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
